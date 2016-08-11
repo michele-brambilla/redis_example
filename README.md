@@ -42,6 +42,13 @@ python psi_example.py -u <hash name, key, new value>
 
 Update the key <key> within the database hash <hash name> with the value <new value>. Moreover send a messave in the pubsub channel <hash name> nad data corresponding to the key name that has been modified.
 
+### Fetch a configuration ###
+A single configuration in a jSON-like format can be fetched Using
+```
+python psi_example.py -f <configuration name>
+```
+Configuration can be send on the corresponding channel (TODO)?
+
 ## Example ##
 
 First populate the database
@@ -62,6 +69,18 @@ The listener notifies:
 > Change on hash source:instrument1:motor2 key: address
 
 To shut down the listener just press a key.
+To fetch a whole configuration
+```
+python psi_example.py -f instrument2
+```
+returns
+> {'experiment': {'id': '1234', 'name': 'diffraction'},
+ 'sources': {'motor1': {'address': 'IOC:m3', 'type': 'ca-motor'},
+             'motor2': {'address': 'IOC:m2', 'type': 'ca-motor'},
+             'motor3': {'address': 'IOC:m3', 'type': 'ca-motor'},
+             'motor4': {'address': 'IOC:m4', 'type': 'ca-motor'},
+             'temp2': {'address': 'STC2', 'type': 'pv-temp'}},
+ 'user': {'email': 'user1@esss.se', 'institute': 'ESS', 'name': 'user1'}}
 
 ## TODO ##
 

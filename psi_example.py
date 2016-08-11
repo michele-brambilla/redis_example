@@ -49,6 +49,18 @@ def Update(key,item,val,redis):
         redis.hset(key,item,val)
         r.publish(src[0],src[1])
 
+
+def Fetch(config_name,redis):
+    config = dict()
+    for key in 'user','experiment','sources':
+        if redis.type(config_name+':'+key) == 'hash':
+            config[key] = redis.hgetall(config_name+':'+key)
+        if redis.type(config_name+':'+key) == 'set':
+            config[key] = dict()
+            for item in redis.smembers(config_name+':'+key):
+                config[key][item] = redis.hgetall('source:'+config_name+':'+item)
+    return config
+    
         
 def config_change_handler(message):
     print 'Change on hash '+message['channel']+' key: '+message['data']
@@ -80,6 +92,11 @@ if __name__ == "__main__":
                         nargs='?',
                         type=str,
                         help="key-value to update")
+    parser.add_argument("-f","--fetch", 
+                        action="store",
+                        nargs='?',
+                        type=str,
+                        help="fetch configuration information")
 
     args = parser.parse_args()
 
@@ -109,6 +126,9 @@ if __name__ == "__main__":
         src=args.update.split(',')
         Update(src[0],src[1],src[2],r)
 
+    if args.fetch != None:
+        pprint(Fetch(args.fetch,r))
+        # eventually open a new channel?
 
     if args.key!=None:
         
